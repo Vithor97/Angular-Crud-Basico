@@ -1,0 +1,54 @@
+<div class="card">
+    <div class="card-header">
+      <div class="float-left">
+        <h1>Produtos</h1>
+      </div>
+      <div class="float-right">
+          <button type="button" class="btn btn-primary" [routerLink]="['novo']">Novo Produto</button>
+          <button type="button" class="btn btn-secondary" (click)="onRefresh()">Atualizar</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <table class="table table-hover" *ngIf="produtos$ | async as produtos; else loading">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Produto</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let produto of produtos">
+                <td>{{produto.id}}</td>
+                <td>{{produto.nome}}</td>
+                <td>
+                    <span class="float-right">
+                        <button class="btn btn-outline-warning mb-1 btn-sm" (click)="onEdit(produto.id)">Atualizar</button>
+                        <button class="btn btn-outline-danger mb-1 btn-sm" (click)="onDelete(produto)">Remover</button>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+
+      </table>
+      <ng-template #loading>
+        <div *ngIf="error$ | async; else loadingNoError">
+            Erro ao carregar Produtos. tente mais tarde
+        </div>
+
+        <ng-template #loadingNoError>
+          <span>Carregando Produtos...</span>
+        </ng-template>
+
+      </ng-template>
+    </div>
+  </div>
+
+
+<ng-template #deleteModal>
+  <div class="modal-body text-center">
+    <p>Tem certeza que Deseja Remover o Produto?</p>
+    <button type="button" class="btn btn-default" (click)="onConfirmDelete()">Sim</button>
+    <button type="button" class="btn btn-primary" (click)="onDeclineDelete()">Não</button>
+  </div>
+</ng-template>
