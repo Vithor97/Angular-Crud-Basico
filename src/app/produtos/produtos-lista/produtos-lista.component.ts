@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ViewChildren, QueryList } from '@angular/core';
 import { ProdutoService } from '../produto.service';
 import { Produto } from '../produto';
 import { Observable, empty, Subject, EMPTY } from 'rxjs';
-import { catchError, take, switchMap } from 'rxjs/operators';
+import { catchError, take, switchMap, tap } from 'rxjs/operators';
 import { BsModalRef} from 'ngx-bootstrap/modal/ngx-bootstrap-modal';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AlertModalComponent } from 'src/app/shared/alert-modal/alert-modal.component';
@@ -17,12 +17,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class ProdutosListaComponent implements OnInit {
 
 
-  produtos: Produto[];
+  @ViewChild('valor') valor: any
+  val: any
+  produtoss: Produto[];
 
   produtos$: Observable <Produto[]>;
   error$ = new Subject<boolean>();
 
   produtoSelecionado: Produto;
+
+  filter: string  = '';
 
  // bsModalRef: BsModalRef;
  deletModalRef: BsModalRef;
@@ -61,6 +65,7 @@ export class ProdutosListaComponent implements OnInit {
         return empty();
       })
     )
+    this.produtos$.subscribe(dados => this.produtoss = dados);
 
   }
 
@@ -94,6 +99,13 @@ export class ProdutosListaComponent implements OnInit {
           this.alertService.showAlertDanger('Erro ao Remover Produto. tente mais tarde!');
         }
       );
+  }
+
+  numProdutos(){
+    console.log(this.valor.nativeElement.childElementCount)
+    let val = this.valor.nativeElement.childElementCount;
+    return val
+
   }
 
   onConfirmDelete(){

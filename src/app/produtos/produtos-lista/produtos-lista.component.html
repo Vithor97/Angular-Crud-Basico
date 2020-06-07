@@ -10,15 +10,23 @@
     </div>
     <div class="card-body">
       <table class="table table-hover" *ngIf="produtos$ | async as produtos; else loading">
-        <thead>
-            <tr>
+        <thead >
+            <tr >
                 <th>#</th>
                 <th>Produto</th>
-                <th></th>
+                <th>
+                  <div class="float-right ">
+                    <ap-search (onTyping)="filter = $event" [value]="filter"></ap-search>
+                  </div>
+                </th>
             </tr>
+
+            <!-- <button  (click)="numProdutos()">Testa num prod</button> -->
         </thead>
         <tbody>
-            <tr *ngFor="let produto of produtos">
+
+            <tr *ngFor="let produto of produtos | filterByDescription: filter" >
+
                 <td>{{produto.id}}</td>
                 <td>{{produto.nome}}</td>
                 <td>
@@ -27,9 +35,10 @@
                         <button class="btn btn-outline-danger mb-1 btn-sm" (click)="onDelete(produto)">Remover</button>
                     </span>
                 </td>
+
+                <!-- <p *ngIf="rrr.length==0">tem nada</p> -->
             </tr>
         </tbody>
-
       </table>
       <ng-template #loading>
         <div *ngIf="error$ | async; else loadingNoError">
@@ -40,6 +49,10 @@
           <span>Carregando Produtos...</span>
         </ng-template>
 
+      </ng-template>
+
+      <ng-template #teste>
+        <span>Produto nao encontrado</span>
       </ng-template>
     </div>
   </div>
