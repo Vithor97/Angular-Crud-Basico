@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, ViewChildren, QueryList, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ProdutoService } from '../produto.service';
 import { Produto } from '../produto';
 import { Observable, empty, Subject, EMPTY } from 'rxjs';
-import { catchError, take, switchMap, tap } from 'rxjs/operators';
+import { catchError, take, switchMap, tap, delay, startWith } from 'rxjs/operators';
 import { BsModalRef} from 'ngx-bootstrap/modal/ngx-bootstrap-modal';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AlertModalComponent } from 'src/app/shared/alert-modal/alert-modal.component';
@@ -19,14 +19,17 @@ export class ProdutosListaComponent implements OnInit {
 
   @ViewChild('valor') valor: any
   val: any
-  produtoss: Produto[];
+  produtoss: Produto[] = [];
 
   produtos$: Observable <Produto[]>;
   error$ = new Subject<boolean>();
+  carregado$ = new Subject<boolean>();
 
   produtoSelecionado: Produto;
 
   filter: string  = '';
+
+  t:boolean = false
 
  // bsModalRef: BsModalRef;
  deletModalRef: BsModalRef;
@@ -37,10 +40,15 @@ export class ProdutosListaComponent implements OnInit {
     private modalService: BsModalService,
     private alertService: AlertModalService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdRef:ChangeDetectorRef
     ) { }
 
+
+
   ngOnInit(): void {
+
+
     //posso fazer dessa maneira
     // this.service.listaProdutos()
     //     .subscribe(dados => this.produtos = dados)
@@ -48,6 +56,7 @@ export class ProdutosListaComponent implements OnInit {
     //fazendo da maneira abaixo eu evito de fazer da maneira de cima
     //chamo o metodo de refresh
     this.onRefresh();
+
 
 
 
@@ -64,8 +73,10 @@ export class ProdutosListaComponent implements OnInit {
         this.handleError();
         return empty();
       })
-    )
-    this.produtos$.subscribe(dados => this.produtoss = dados);
+    );
+    this.produtos$.subscribe(dados => {
+      this.produtoss = dados;
+    });
 
   }
 
@@ -99,6 +110,39 @@ export class ProdutosListaComponent implements OnInit {
           this.alertService.showAlertDanger('Erro ao Remover Produto. tente mais tarde!');
         }
       );
+  }
+
+  obterProdutos(){
+
+    if (this.produtoss?.length === 0 || this.filter === undefined || this.filter.trim() === ''){
+      return this.produtoss;
+    }
+    return this.produtoss.filter((v) => {
+     if (v.nome.toLowerCase().includes(this.filter)){
+        return true;
+      }
+      else{
+        return false;
+      }
+    });
+  }
+
+  testaFiltro(){
+    let valores = this.produtoss.filter((valor) => {
+      return valor.nome.toLowerCase().includes(this.filter);
+    });
+    return valores;
+  }
+
+  verificaFiltro(){
+    //console.log(this.testaFiltro())
+    let val = this.obterProdutos();
+    if (this.filter !== '' && (val.length === 0 || this.obterProdutos() === undefined)){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
   numProdutos(){

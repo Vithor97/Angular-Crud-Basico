@@ -21,11 +21,11 @@
                 </th>
             </tr>
 
-            <!-- <button  (click)="numProdutos()">Testa num prod</button> -->
+             <!-- <button  (click)="testaFiltro()">Testa num prod</button> -->
         </thead>
         <tbody>
 
-            <tr *ngFor="let produto of produtos | filterByDescription: filter" >
+            <!-- <tr *ngFor="let produto of produtos | filterByDescription: filter" >
 
                 <td>{{produto.id}}</td>
                 <td>{{produto.nome}}</td>
@@ -36,8 +36,26 @@
                     </span>
                 </td>
 
-                <!-- <p *ngIf="rrr.length==0">tem nada</p> -->
-            </tr>
+
+            </tr> -->
+
+
+
+            <tr #valor *ngFor="let produto of obterProdutos()" >
+
+
+
+                <td>{{produto.id}}</td>
+                <td>{{produto.nome}}</td>
+                <td>
+                    <span class="float-right">
+                        <button class="btn btn-outline-warning mb-1 btn-sm" (click)="onEdit(produto.id)">Atualizar</button>
+                        <button class="btn btn-outline-danger mb-1 btn-sm" (click)="onDelete(produto)">Remover</button>
+                    </span>
+                </td>
+
+              <!-- <p *ngIf="rrr.length==0">tem nada</p> -->
+          </tr>
         </tbody>
       </table>
       <ng-template #loading>
@@ -54,8 +72,16 @@
       <ng-template #teste>
         <span>Produto nao encontrado</span>
       </ng-template>
+
+      <div *ngIf="verificaFiltro()" >
+        <span>Produto nao encontrado</span>
+      </div>
+
+
     </div>
   </div>
+
+
 
 
 <ng-template #deleteModal>

@@ -15,9 +15,10 @@ export class ProdutoService {
 
     listaProdutos(){
         return this.http.get<Produto[]>(API + '/produtos')
-        .pipe(
+        .pipe(take(1),
             delay(2000),
-            tap(() => { console.log('oi') })
+            tap(() => { console.log('produstos chamados')}),
+
         );
     }
 
